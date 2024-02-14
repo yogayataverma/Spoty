@@ -1,4 +1,13 @@
 import React from 'react'
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import Sidebar from "../components/Sidebar";
+import PlaylistView from "../components/PlaylistView";
+import Search from "../components/Search";
+import Library from "../components/Library";
+import Artist from "../components/Artist";
+import Player from "../components/Player";
+import Categories from "../components/Categories";
 
 export default function Home() {
   return (
