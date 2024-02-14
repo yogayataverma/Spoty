@@ -1,0 +1,112 @@
+import {BuildingLibraryIcon, HeartIcon, HomeIcon , MagnifyingGlassIcon, PlusCircleIcon} from '@heroicons/react/24/outline';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from "react";
+
+export default function Sidebar({ view, setView, setGlobalPlaylistId }) {
+
+    const SpotifySVG = () => (
+        <svg width="50" height="50">
+        {/* Center of the flower */}
+        <circle cx="25" cy="25" r="2.5" fill="white" />
+
+        {/* Petals */}
+        <polygon points='25,2.5 28.75,12.5 21.25,12.5' style={{fill: 'white', stroke: 'white', strokeWidth: 0.25}} />
+        <polygon points='25,2.5 28.75,12.5 21.25,12.5' transform="rotate(45 25 25)" style={{fill: 'white', stroke: 'white', strokeWidth: 0.25}} />
+        <polygon points='25,2.5 28.75,12.5 21.25,12.5' transform="rotate(90 25 25)" style={{fill: 'white', stroke: 'white', strokeWidth: 0.25}} />
+        <polygon points='25,2.5 28.75,12.5 21.25,12.5' transform="rotate(135 25 25)" style={{fill: 'white', stroke: 'white', strokeWidth: 0.25}} />
+        <polygon points='25,2.5 28.75,12.5 21.25,12.5' transform="rotate(180 25 25)" style={{fill: 'white', stroke: 'white', strokeWidth: 0.25}} />
+        <polygon points='25,2.5 28.75,12.5 21.25,12.5' transform="rotate(225 25 25)" style={{fill: 'white', stroke: 'white', strokeWidth: 0.25}} />
+        <polygon points='25,2.5 28.75,12.5 21.25,12.5' transform="rotate(270 25 25)" style={{fill: 'white', stroke: 'white', strokeWidth: 0.25}} />
+        <polygon points='25,2.5 28.75,12.5 21.25,12.5' transform="rotate(315 25 25)" style={{fill: 'white', stroke: 'white', strokeWidth: 0.25}} />
+        
+        </svg>
+    )
+
+    const TextLogo =()=>(
+        <svg width="100" height="50" >
+        <text x="0" y="34" fill="white" font-size="25" font-weight="bold" >Spoty</text>
+        </svg>
+    )
+
+    const { data: session } = useSession()
+    const [playlists, setPlaylists] = useState([])
+    // console.log(session.user.accessToken)
+    useEffect(() => {
+        async function f() {
+            if (session && session.accessToken) {
+                const response = await fetch("https://api.spotify.com/v1/me/playlists", {
+                    headers: {
+                        Authorization: `Bearer ${session.accessToken}`
+                    }
+                })
+                const data = await response.json()
+                setPlaylists(data.items)
+            }
+        }
+        f()
+    }, [session])
+
+    console.log(playlists);
+
+  return (
+    <div className="w-64 text-neutral-400 grow-0 shrink-0 h-screen overflow-y-hidden border-r border-neutral-900 flex flex-col px-5 space-y-4 text-sm">
+        <div className='space-y-5'>
+        <div className='flex items-center space-x-4'>
+            <div className='mt-4 mb-1'>
+                <SpotifySVG />
+            </div>
+            <div className='mt-4 mb-1'>
+                <TextLogo />
+            </div>
+        </div>
+        </div>
+        <div>
+            <button className='flex items-center space-x-2 hover:text-white'><HomeIcon  className='h-5 w-5'/>
+            <p>Home</p>
+            </button>
+
+            <button onClick={() => setView("search")} className={`flex items-center space-x-2 hover:text-white mt-4 ${view == "search" ? "text-white" : null}`} ><MagnifyingGlassIcon  className='h-5 w-5'/>
+            <p>Search</p>
+            </button>
+
+            <button onClick={() => setView("library")} className={`flex items-center space-x-2 hover:text-white mt-4 ${view == "library" ? "text-white" : null}`} ><BuildingLibraryIcon  className='h-5 w-5'/>
+            <p>Your Library</p>
+            </button>
+
+            <hr className='border-black mt-5'/>
+
+            <button className='flex items-center space-x-2 hover:text-white mt-4'><PlusCircleIcon  className='h-5 w-5'/>
+            <p>Create Playlist</p>
+            </button>
+
+            <button className='flex items-center space-x-2 hover:text-white mt-4'><HeartIcon  className='h-5 w-5'/>
+            <p>Liked Songs</p>
+            </button>
+
+            <hr className='border-neutral-900 mt-4 mb-2'/>
+
+            <div className='mt-4'>
+            {
+                    playlists.map((playlist) => {
+                        return (
+                            <p
+                                key={playlist.id}
+                                onClick={() => {
+                                    setView("playlist")
+                                    setGlobalPlaylistId(playlist.id)
+                                }}
+                                className='cursor-default hover:text-white w-52 truncate mt-4'
+                            >
+                                {playlist.name}
+                            </p>
+                        )
+                    })
+                }
+
+            </div>
+
+
+        </div>
+    </div>
+  )
+}
