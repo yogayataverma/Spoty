@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "../components/Sidebar";
 import PlaylistView from "../components/PlaylistView";
 import Search from "../components/Search";
 import Library from "../components/Library";
